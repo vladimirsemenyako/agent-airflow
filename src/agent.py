@@ -114,7 +114,7 @@ async def trigger_dag(ctx: RunContext[Deps], dag_id: str) -> str:
     uri = f'{ctx.deps.airflow_api_base_uri}:{ctx.deps.airflow_api_port}/api/v1/dags/{dag_id}/dagRuns'
     auth = (ctx.deps.airflow_api_user, ctx.deps.airflow_api_pass)
     
-    # API Airflow требует тело JSON, даже если оно пустое.
+    # API Airflow wants JSON body even if it's empty.
     payload = {"conf": {}}
 
     async with AsyncClient() as client:
@@ -124,7 +124,7 @@ async def trigger_dag(ctx: RunContext[Deps], dag_id: str) -> str:
             
             triggered_run_data = response.json()
             logger.info(f"Successfully triggered DAG {dag_id}. Run details: {json.dumps(triggered_run_data)}")
-            # Возвращаем сообщение для LLM, чтобы он знал, что делать дальше
+            # Return message for LLM, so it should know what's next
             return (
                 f"Successfully triggered DAG '{dag_id}'. The new DAG run is "
                 f"'{triggered_run_data.get('state', 'unknown')}'. "
@@ -135,7 +135,7 @@ async def trigger_dag(ctx: RunContext[Deps], dag_id: str) -> str:
             logger.error(f"Failed to trigger DAG {dag_id}: {e}")
             if e.response.status_code == 404:
                 return f"DAG with ID '{dag_id}' not found."
-            elif e.response.status_code == 409: # Конфликт - DAG уже запущен или на паузе
+            elif e.response.status_code == 409: # DAG is already running 
                 return f"Failed to trigger DAG '{dag_id}'. A run is already active or the DAG is paused."
             return f"An error occurred while triggering DAG '{dag_id}': {e.response.text}"
 
@@ -147,10 +147,10 @@ async def main():
         airflow_api_pass='airflow'
     )
 
-    # Запрос на запуск DAG
+    # DAG Trigger Example
     user_request = 'Can you please run the DAG for our daily payment report?'
     
-    # Предыдущий запрос на получение статуса
+    # DAG Status Example
     # user_request = 'What is the status of the DAG for our daily payment report?'
 
     print(f"User request: '{user_request}'")
