@@ -31,3 +31,23 @@ docker-compose up
 Login / Password : airflow / airflow
 ![alt text](img/airflow-login-page.png)
 
+## Example of Usage
+
+Here is our Airflow UI, where we have lots of DAG's. There I have an example *payment* DAG.
+![alt text](img/airflow-dags-page.png)
+
+In **src/agent.py** there is a *user_request* variable. You can type there any command that will be given to an agent.
+
+My command is *"Can you please run the DAG for our daily payment report?"*
+
+Let's run this!
+
+```bash
+python3 src/agent.py
+```
+
+Here is a result
+![alt text](img/output-example.png)
+
+We can see that our DAG has worked successfully in Airflow UI 
+![alt text](img/payment-ui-show.png)
